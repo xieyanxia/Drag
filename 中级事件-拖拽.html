@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>拖拽效果</title>
+    <style>
+        #drag{
+            width: 200px;
+            height:200px;
+            border: 1px solid #eee;
+            background-color: red;
+            position: absolute;
+            top: 50px;
+            left:300px;
+        }
+        .box{
+            border: 1px solid #333;
+            color: #fff;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>aaaaaaaaaaaa
+
+<div class="wrapper" id="drag">aaaaaaaaaaaa</div>
+<script>
+    window.onload = function(){
+        var oDiv = document.getElementById('drag');
+        oDiv.onmousedown = function(ev){
+            var oEvent = event|| ev;
+            var posX = oEvent.clientX - oDiv.offsetLeft;
+            var posY = oEvent.clientY - oDiv.offsetTop;
+            var oBox = document.createElement('div');
+            oBox.className = 'box';//
+            oBox.style.width = oDiv.offsetWidth - 2 + 'px';//斜杠代码移动的是框不是div
+            oBox.style.height = oDiv.offsetHeight - 2 + 'px';//
+            oBox.style.left = oDiv.offsetLeft + 'px';//
+            oBox.style.top = oDiv.offsetTop + 'px';//
+            document.body.appendChild(oBox);//
+            if(oDiv.setCapture){
+                oDiv.onmousemove = mouseMove;
+                oDiv.onmouseup = mouseUp;
+                oDiv.setCapture(); //事件捕获 所有事件聚集到div上 鼠标不会拖出div IE
+
+            }
+            else{
+                document.onmousemove = mouseMove;
+                document.onmouseup =  mouseUp;
+            }
+            function mouseMove(ev){
+                var oEvent = event||ev;
+                var l =  oEvent.clientX - posX;
+                var h = oEvent.clientY - posY;
+                if(l< 0){
+                    l = 0;
+                }
+                else if(l>document.documentElement.clientWidth - oDiv.offsetWidth){
+                    l =document.documentElement.clientWidth - oDiv.offsetWidth;
+                }
+                if(h<0){
+                    h = 0;
+                }
+                else if(h>document.documentElement.clientHeight - oDiv.offsetHeight){
+                    h = document.documentElement.clientHeight - oDiv.offsetHeight;
+                }
+                oBox.style.left = l + 'px';//
+                oBox.style.top = h + 'px';//
+            }
+            function mouseUp(){
+                this.onmousemove = null;
+                this.onmouseup = null;
+                oDiv.style.left = oBox.offsetLeft  + 'px';
+                oDiv.style.top = oBox.offsetTop + 'px';
+
+                document.body.removeChild(oBox);//干掉oBox
+
+                if( this.releaseCapture){
+                    this.releaseCapture();
+                }
+            }
+
+        }
+
+
+    }
+
+</script>
+</body>
+</html>
